@@ -6,6 +6,8 @@ import (
 	"github.com/shani34/book-management-system/internal/services"
 	"net/http"
 	"strconv"
+	"errors"
+	"gorm.io/gorm"
 )
 
 type BookHandler struct {
@@ -33,7 +35,11 @@ func (h *BookHandler) GetBooks(c *gin.Context) {
 
 	books, err := h.service.GetAllBooks(limit, offset)
 	if err!=nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "book not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		}
 		return
 	}
 
@@ -60,7 +66,11 @@ func (h *BookHandler) GetBook(c *gin.Context) {
 
 	book, err := h.service.GetBookByID(uint(id))
 	if err!=nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "book not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error":err})
+		}
 		return
 	}
 
@@ -120,7 +130,11 @@ func (h *BookHandler) UpdateBook(c *gin.Context) {
 	}
 
 	if err := h.service.UpdateBook(uint(id), &book); err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "book not found, cannot update"})
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update book"})
+	}
 		return
 	}
 
@@ -146,8 +160,12 @@ func (h *BookHandler) DeleteBook(c *gin.Context) {
 	}
 
 	if err := h.service.DeleteBook(uint(id)); err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
-		return
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "book not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete book"})
+		}
+	  return
 	}
 
 	c.Status(http.StatusNoContent)
