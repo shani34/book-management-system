@@ -111,7 +111,8 @@ DELETE https://book-management-system-production-7d0e.up.railway.app/api/v1/book
 - **Production:** [https://book-management-system-production-7d0e.up.railway.app/swagger/index.html](https://book-management-system-production-7d0e.up.railway.app/swagger/index.html)
 
 ## Postman Collection
-To run the API in Postman, import the collection file and configure your environment variables accordingly. [Title](../../../../Book-API.postman_collection.json)
+To run the API in Postman, import the collection file and configure your environment variables 
+
 ## Technologies Used
 - **Framework:** Gin
 - **Database:** PostgreSQL

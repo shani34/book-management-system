@@ -1,0 +1,106 @@
+{
+    "info": {
+      "name": "Book Management API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Create Book",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"title\": \"The Go Programming Language\",\n  \"author\": \"Alan Donovan\",\n  \"year\": 2015\n}"
+          },
+          "url": {
+            "raw": "{{base_url}}/api/v1/books",
+            "host": ["{{base_url}}"],
+            "path": ["api", "v1", "books"]
+          }
+        }
+      },
+      {
+        "name": "Get All Books",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/api/v1/books?limit=10&offset=0",
+            "host": ["{{base_url}}"],
+            "path": ["api", "v1", "books"],
+            "query": [
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "offset",
+                "value": "0"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Get Single Book",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/api/v1/books/1",
+            "host": ["{{base_url}}"],
+            "path": ["api", "v1", "books", "1"]
+          }
+        }
+      },
+      {
+        "name": "Update Book",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"title\": \"Updated Book Title\",\n  \"author\": \"Updated Author\",\n  \"year\": 2023\n}"
+          },
+          "url": {
+            "raw": "{{base_url}}/api/v1/books/1",
+            "host": ["{{base_url}}"],
+            "path": ["api", "v1", "books", "1"]
+          }
+        }
+      },
+      {
+        "name": "Delete Book",
+        "request": {
+          "method": "DELETE",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/api/v1/books/1",
+            "host": ["{{base_url}}"],
+            "path": ["api", "v1", "books", "1"]
+          }
+        }
+      }
+    ],
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "https://book-management-system-production-7d0e.up.railway.app"
+      },
+      {
+        "key": "book_id",
+        "value": "1"
+      }
+    ]
+  }
