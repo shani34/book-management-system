@@ -153,13 +153,7 @@ func handleError(c *gin.Context, err error) bool {
 		return false
 	}
 
-	switch err {
-	case gorm.ErrRecordNotFound:
-		c.JSON(http.StatusNotFound, gin.H{"error": "book not found"})
-	case services.ErrInvalidInput:
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
-	}
-	return true
+    c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+	
+	 return true
 }

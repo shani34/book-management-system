@@ -3,9 +3,6 @@ package main
 import (
     "github.com/shani34/book-management-system/api"
     "github.com/shani34/book-management-system/config"
-    "github.com/shani34/book-management-system/pkg/db"
-    "github.com/shani34/book-management-system/pkg/kafka"
-    "github.com/shani34/book-management-system/pkg/redis"
     "log"
 )
 
@@ -18,10 +15,6 @@ func main() {
     // Load environment variables
     config.LoadEnv()
     
-    // Initialize dependencies
-    db.InitDB()
-    redis.InitRedis()
-    kafka.InitKafkaProducer()
     
     // Create router with middleware
     router := api.SetupRouter()

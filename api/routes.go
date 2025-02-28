@@ -17,12 +17,21 @@ func SetupRouter() *gin.Engine {
     
     // Middleware
     router.Use(middleware.Logger())
-    router.Use(middleware.ErrorHandler())
+    // router.Use(middleware.ErrorHandler())
     router.Use(gin.Recovery())
     
     // Initialize dependencies
-    bookRepo := repositories.NewBookRepository(db.GetDB())
-    redisClient := redis.GetClient()
+	db, err:=db.InitDB()
+	if err!=nil{
+		gin.Logger()
+	}
+	redisClient, err := redis.InitRedis()
+	if err!=nil{
+		gin.Logger()
+	}
+	
+    bookRepo := repositories.NewBookRepository(db)
+    
     bookService := services.NewBookService(bookRepo, redisClient)
     bookHandler := handlers.NewBookHandler(bookService)
     
