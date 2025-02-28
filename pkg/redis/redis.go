@@ -3,7 +3,8 @@ package redis
 import (
 	"context"
 	"github.com/redis/go-redis/v9"
-	"os"
+	"github.com/shani34/book-management-system/config"
+	"fmt"
 	"time"
 )
 
@@ -12,20 +13,22 @@ type RedisClient  struct{
 }
 var Ctx = context.Background()
 
-func InitRedis()(*RedisClient, error) {
-	Client:= redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_URL"),
-		Password: "",
-		DB:       0,
+func InitRedis() (*RedisClient, error) {
+	cfg := config.Get().Redis
+
+	client := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%s", cfg.Host, cfg.Port),
+		Password: cfg.Password,
+		DB:       cfg.DB,
 	})
 
-	_, err := Client.Ping(Ctx).Result()
+	_, err := client.Ping(Ctx).Result()
 	if err != nil {
-		panic("failed to connect to redis")
+		return nil, fmt.Errorf("failed to connect to redis: %w", err)
 	}
 
 	return &RedisClient{
-		Client: Client,
+		Client: client,
 	}, nil
 }
 

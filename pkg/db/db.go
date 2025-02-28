@@ -4,31 +4,35 @@ import (
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"github.com/shani34/book-management-system/config"
 	"github.com/shani34/book-management-system/internal/models"
-	"os"
 )
 
 var DB *gorm.DB
 
-func InitDB()(*gorm.DB, error) {
-	var err error
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"),
+func InitDB() (*gorm.DB, error) {
+	// Get database configuration
+	dbConfig := config.Get().DB
+
+	// Create DSN from config
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+		dbConfig.Host,
+		dbConfig.User,
+		dbConfig.Password,
+		dbConfig.Name,
+		dbConfig.Port,
+		dbConfig.SSLMode,
 	)
 
+	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect database")
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
 	// Auto migrate models
-	err = DB.AutoMigrate(&models.Book{})
-	if err != nil {
-		panic("failed to migrate database")
+	if err = DB.AutoMigrate(&models.Book{}); err != nil {
+		return nil, fmt.Errorf("failed to auto-migrate database: %w", err)
 	}
 
 	return DB, nil

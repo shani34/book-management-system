@@ -2,22 +2,24 @@ package kafka
 
 import (
 	"github.com/IBM/sarama"
-	"log"
-	"os"
+	"github.com/shani34/book-management-system/config"
+	"fmt"
 )
 
 var Producer sarama.SyncProducer
 
-func InitKafkaProducer() {
-	config := sarama.NewConfig()
-	config.Producer.Return.Successes = true
-	config.Producer.RequiredAcks = sarama.WaitForAll
+func InitKafkaProducer() error {
+	cfg := config.Get().Kafka
+	kafkaConfig := sarama.NewConfig()
+	kafkaConfig.Producer.Return.Successes = true
+	kafkaConfig.Producer.RequiredAcks = sarama.WaitForAll
 
 	var err error
-	Producer, err = sarama.NewSyncProducer([]string{os.Getenv("KAFKA_BROKER")}, config)
+	Producer, err = sarama.NewSyncProducer(cfg.Brokers, kafkaConfig)
 	if err != nil {
-		log.Fatalf("Failed to create Kafka producer: %v", err)
+		return fmt.Errorf("failed to create kafka producer: %w", err)
 	}
+	return nil
 }
 
 func PublishEvent(topic string, message []byte) error {
