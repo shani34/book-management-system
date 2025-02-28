@@ -73,7 +73,7 @@ services:
       test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 5  
 
 volumes:
   postgres_data:

@@ -6,11 +6,12 @@ import (
     "log"
 )
 
-// @title Book Management API
-// @version 1.0
-// @description This is a REST API for managing books
-// @host localhost:8080
-// @BasePath /api/v1
+// @title           Book Management API
+// @version         1.0
+// @description     This is a REST API for managing books
+// @host            localhost:8080
+// @BasePath        /api/v1
+// @schemes         http
 func main() {
     // Load environment variables
     config.LoadEnv()

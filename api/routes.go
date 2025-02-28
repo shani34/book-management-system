@@ -10,6 +10,7 @@ import (
     "github.com/shani34/book-management-system/internal/repositories"
     "github.com/shani34/book-management-system/pkg/db"
     "github.com/shani34/book-management-system/pkg/redis"
+
 )
 
 func SetupRouter() *gin.Engine {
@@ -29,7 +30,6 @@ func SetupRouter() *gin.Engine {
 	if err!=nil{
 		gin.Logger()
 	}
-	
     bookRepo := repositories.NewBookRepository(db)
     
     bookService := services.NewBookService(bookRepo, redisClient)
