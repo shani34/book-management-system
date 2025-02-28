@@ -36,6 +36,7 @@ func InitKafkaProducer() {
         TLS: &tls.Config{
             Certificates: []tls.Certificate{keypair},
             RootCAs:      caCertPool,
+			InsecureSkipVerify: true,
         },
     }
 
