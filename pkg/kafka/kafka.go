@@ -46,7 +46,6 @@ func InitKafkaProducer() {
         Dialer:  dialer,
     })
 
-    Producer.Close()
 }
 
 func PublishEvent(topic string,  message []byte)error{
