@@ -13,11 +13,11 @@ import (
 
 type BookService struct {
 	repo    *repositories.BookRepository
-	cache   *redis.
+	cache   *redis.RedisClient
 	timeout time.Duration
 }
 
-func NewBookService(repo *repositories.BookRepository, cache *redis.Client) *BookService {
+func NewBookService(repo *repositories.BookRepository, cache *redis.RedisClient) *BookService {
 	return &BookService{
 		repo:    repo,
 		cache:   cache,
