@@ -22,9 +22,9 @@ COPY --from=builder /app/docs ./docs
 COPY .env .
 
 # Copy Kafka TLS files
-COPY --from=builder /app/pkg/kafka/service.key /app/pkg/kafka/service.key
-COPY --from=builder /app/pkg/kafka/service.cert /app/pkg/kafka/service.cert
-COPY --from=builder /app/pkg/kafka/ca.pem /app/pkg/kafka/ca.pem
+COPY --from=builder /app/pkg/kafka/service.key ./pkg/kafka/service.key
+COPY --from=builder /app/pkg/kafka/service.cert ./pkg/kafka/service.cert
+COPY --from=builder /app/pkg/kafka/ca.pem ./pkg/kafka/ca.pem
 
 EXPOSE 8080
 CMD ["./main"]
