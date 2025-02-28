@@ -3,7 +3,7 @@ package kafka
 import (
 	"github.com/IBM/sarama"
 	"github.com/shani34/book-management-system/config"
-	"fmt"
+    "fmt"
 )
 
 var Producer sarama.SyncProducer

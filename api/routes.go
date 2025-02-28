@@ -1,16 +1,16 @@
 package api
 
 import (
-    "github.com/gin-gonic/gin"
-    swaggerFiles "github.com/swaggo/files"
-    ginSwagger "github.com/swaggo/gin-swagger"
-    "github.com/shani34/book-management-system/internal/handlers"
-    "github.com/shani34/book-management-system/internal/middleware"
-    "github.com/shani34/book-management-system/internal/services"
-    "github.com/shani34/book-management-system/internal/repositories"
-    "github.com/shani34/book-management-system/pkg/db"
-    "github.com/shani34/book-management-system/pkg/redis"
-
+	"github.com/gin-gonic/gin"
+	"github.com/shani34/book-management-system/internal/handlers"
+	"github.com/shani34/book-management-system/internal/middleware"
+	"github.com/shani34/book-management-system/internal/repositories"
+	"github.com/shani34/book-management-system/internal/services"
+	"github.com/shani34/book-management-system/pkg/db"
+	"github.com/shani34/book-management-system/pkg/kafka"
+	"github.com/shani34/book-management-system/pkg/redis"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRouter() *gin.Engine {
@@ -30,6 +30,7 @@ func SetupRouter() *gin.Engine {
 	if err!=nil{
 		gin.Logger()
 	}
+	kafka.InitKafkaProducer()
     bookRepo := repositories.NewBookRepository(db)
     
     bookService := services.NewBookService(bookRepo, redisClient)
