@@ -32,7 +32,8 @@ func (h *BookHandler) GetBooks(c *gin.Context) {
 	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
 
 	books, err := h.service.GetAllBooks(limit, offset)
-	if handleError(c, err) {
+	if err!=nil {
+		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
 		return
 	}
 
@@ -52,12 +53,14 @@ func (h *BookHandler) GetBooks(c *gin.Context) {
 // @Router /books/{id} [get]
 func (h *BookHandler) GetBook(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if handleError(c, err) {
+	if err!=nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
 	book, err := h.service.GetBookByID(uint(id))
-	if handleError(c, err) {
+	if err!=nil {
+		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
 		return
 	}
 
@@ -105,7 +108,8 @@ func (h *BookHandler) CreateBook(c *gin.Context) {
 // @Router /books/{id} [put]
 func (h *BookHandler) UpdateBook(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if handleError(c, err) {
+	if err!=nil {
+		c.JSON(http.StatusBadRequest,gin.H{"error":err})
 		return
 	}
 
@@ -116,7 +120,7 @@ func (h *BookHandler) UpdateBook(c *gin.Context) {
 	}
 
 	if err := h.service.UpdateBook(uint(id), &book); err != nil {
-		handleError(c, err)
+		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
 		return
 	}
 
@@ -136,24 +140,15 @@ func (h *BookHandler) UpdateBook(c *gin.Context) {
 // @Router /books/{id} [delete]
 func (h *BookHandler) DeleteBook(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if handleError(c, err) {
+	if err!=nil {
+		c.JSON(http.StatusBadRequest,gin.H{"error":err})
 		return
 	}
 
 	if err := h.service.DeleteBook(uint(id)); err != nil {
-		handleError(c, err)
+		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
 		return
 	}
 
 	c.Status(http.StatusNoContent)
-}
-
-func handleError(c *gin.Context, err error) bool {
-	if err == nil {
-		return false
-	}
-
-    c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
-	
-	 return true
 }
