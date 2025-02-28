@@ -15,9 +15,9 @@ import (
 // @contact.email support@bookapi.com
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host https://book-management-system-production-7d0e.up.railway.app
+// @host book-management-system-production-7d0e.up.railway.app
 // @BasePath /api/v1
-// @schemes http
+// @schemes https
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
