@@ -1,33 +1,54 @@
 package kafka
 
 import (
-	"github.com/IBM/sarama"
-	"github.com/shani34/book-management-system/config"
-    "fmt"
+    "context"
+    "crypto/tls"
+    "crypto/x509"
+    "io/ioutil"
+    "log"
+    "time"
+
+    "github.com/segmentio/kafka-go"
 )
+var Producer *kafka.Writer
+func InitKafkaProducer() {
+    TOPIC_NAME := "TOPIC_NAME"
 
-var Producer sarama.SyncProducer
+    keypair, err := tls.LoadX509KeyPair("service.cert", "service.key")
+    if err != nil {
+        log.Fatalf("Failed to load access key and/or access certificate: %s", err)
+    }
 
-func InitKafkaProducer() error {
-	cfg := config.Get().Kafka
-	kafkaConfig := sarama.NewConfig()
-	kafkaConfig.Producer.Return.Successes = true
-	kafkaConfig.Producer.RequiredAcks = sarama.WaitForAll
+    caCert, err := ioutil.ReadFile("ca.pem")
+    if err != nil {
+        log.Fatalf("Failed to read CA certificate file: %s", err)
+    }
 
-	var err error
-	Producer, err = sarama.NewSyncProducer(cfg.Brokers, kafkaConfig)
-	if err != nil {
-		return fmt.Errorf("failed to create kafka producer: %w", err)
-	}
-	return nil
+    caCertPool := x509.NewCertPool()
+    ok := caCertPool.AppendCertsFromPEM(caCert)
+    if !ok {
+        log.Fatalf("Failed to parse CA certificate file: %s", err)
+    }
+
+    dialer := &kafka.Dialer{
+        Timeout:   10 * time.Second,
+        DualStack: true,
+        TLS: &tls.Config{
+            Certificates: []tls.Certificate{keypair},
+            RootCAs:      caCertPool,
+        },
+    }
+
+    // init producer
+    Producer = kafka.NewWriter(kafka.WriterConfig{
+        Brokers: []string{"kafka-245868dd-shani-kafka-test-007.c.aivencloud.com:24869"},
+        Topic:   TOPIC_NAME,
+        Dialer:  dialer,
+    })
+
+    Producer.Close()
 }
 
-func PublishEvent(topic string, message []byte) error {
-	msg := &sarama.ProducerMessage{
-		Topic: topic,
-		Value: sarama.ByteEncoder(message),
-	}
-
-	_, _, err := Producer.SendMessage(msg)
-	return err
+func PublishEvent(topic string,  message []byte)error{
+	return Producer.WriteMessages(context.Background(), kafka.Message{Value: []byte(message)})
 }

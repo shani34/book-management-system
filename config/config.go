@@ -34,6 +34,8 @@ type RedisConfig struct {
 
 type KafkaConfig struct {
 	Brokers []string
+	Username string
+	Password string
 }
 
 type ServerConfig struct {
@@ -67,6 +69,8 @@ func LoadEnv() {
 		},
 		Kafka: KafkaConfig{
 			Brokers: getEnvAsSlice("KAFKA_BROKERS", []string{"localhost:9092"}),
+			Username: getEnv("username","username"),
+			Password: getEnv("password","password"),
 		},
 		Server: ServerConfig{
 			Port:         getEnv("SERVER_PORT", "8080"),
