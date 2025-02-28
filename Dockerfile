@@ -6,10 +6,9 @@ COPY . .
 # Install swag and dependencies
 RUN apk add --no-cache git
 RUN go install github.com/swaggo/swag/cmd/swag@latest
-RUN go install github.com/swaggo/gin-swagger
 
 # Generate docs
-RUN swag init --parseDependency --parseInternal -g cmd/main.go -o ./docs --outputTypes json,yaml --propertyStrategy camelcase
+RUN swag init -g cmd/main.go -o ./docs 
 
 # Build application
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd

@@ -3,6 +3,7 @@ package main
 import (
     "github.com/shani34/book-management-system/api"
     "github.com/shani34/book-management-system/config"
+	_ "github.com/shani34/book-management-system/docs"
     "log"
 )
 
