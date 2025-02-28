@@ -15,7 +15,7 @@ A REST API for managing books with Redis caching and Kafka event streaming, buil
 ## Installation
 
 ### Prerequisites
-- Go 1.21+
+- Go 1.23
 - PostgreSQL
 - Redis
 - Kafka
