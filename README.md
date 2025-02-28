@@ -46,11 +46,9 @@ A REST API for managing books with Redis caching and Kafka event streaming, buil
    swag init -g cmd/main.go -o docs
    ```
 
-
 5. **Start services**
    ```bash
-   docker-compose up -d  # Starts PostgreSQL, Redis, Kafka
-   go run cmd/main.go
+   docker-compose up --build  # Starts PostgreSQL, Redis, Kafka
    ```
 
 ## Production Deployment
@@ -71,7 +69,7 @@ Live API URL:
 
 #### Create Book
 ```http
-POST /books
+POST https://book-management-system-production-7d0e.up.railway.app/api/v1/books
 Content-Type: application/json
 
 {
@@ -83,17 +81,17 @@ Content-Type: application/json
 
 #### Get All Books
 ```http
-GET /books?limit=10&offset=0
+GET https://book-management-system-production-7d0e.up.railway.app/api/v1/books?limit=10&offset=0
 ```
 
 #### Get Single Book
 ```http
-GET /books/{id}
+GET https://book-management-system-production-7d0e.up.railway.app/api/v1/books/{id}
 ```
 
 #### Update Book
 ```http
-PUT /books/{id}
+PUT https://book-management-system-production-7d0e.up.railway.app/api/v1/books/{id}
 Content-Type: application/json
 
 {
@@ -105,7 +103,7 @@ Content-Type: application/json
 
 #### Delete Book
 ```http
-DELETE /books/{id}
+DELETE https://book-management-system-production-7d0e.up.railway.app/api/v1/books/{id}
 ```
 
 ## Swagger UI
@@ -125,7 +123,7 @@ To run the API in Postman, import the collection file and configure your environ
 - **Containerization:** Docker
 
 
-
 ## Contact
-- **Shani Kumar** - [shani@example.com](mailto:shani@example.com)
+- **Shani Kumar** - [shani.mnnit18@gmail.com](mailto:shani.mnnit18@gmail.com)
+
 
