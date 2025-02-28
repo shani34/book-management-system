@@ -1,27 +1,28 @@
 package middleware
 
 import (
-	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
-func Logger() gin.HandlerFunc {
+func RequestLogger(logger *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
-		c.Next()
-		duration := time.Since(start)
-		
-		log.Printf("[%s] %s %d %s",
-			c.Request.Method,
-			c.Request.URL.Path,
-			c.Writer.Status(),
-			duration,
-		)
+		path := c.Request.URL.Path
+		query := c.Request.URL.RawQuery
 
-		if len(c.Errors) > 0 {
-			log.Printf("Errors: %v", c.Errors)
-		}
+		c.Next()
+
+		logger.Info("Request handled",
+			zap.Int("status", c.Writer.Status()),
+			zap.String("method", c.Request.Method),
+			zap.String("path", path),
+			zap.String("query", query),
+			zap.String("ip", c.ClientIP()),
+			zap.String("user-agent", c.Request.UserAgent()),
+			zap.Duration("latency", time.Since(start)),
+		)
 	}
 }
