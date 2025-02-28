@@ -30,23 +30,17 @@ A REST API for managing books with Redis caching and Kafka event streaming, buil
    cd book-management-system
    ```
 
-2. **Set environment variables**
-   ```bash
-   cp .env.example .env
-   # Update values in .env file
-   ```
-
-3. **Install dependencies**
+2. **Install dependencies**
    ```bash
    go mod download
    ```
 
-4. **Generate Swagger documentation**
+3. **Generate Swagger documentation**
    ```bash
    swag init -g cmd/main.go -o docs
    ```
 
-5. **Start services**
+4. **Start services**
    ```bash
    docker-compose up --build  # Starts PostgreSQL, Redis, Kafka
    ```

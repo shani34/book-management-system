@@ -1,0 +1,30 @@
+/bin/
+/obj/
+/pkg/
+*.exe
+*.out
+*.test
+*.so
+
+# Vendor directory (if using Go modules)
+vendor/
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Dependency files
+go.sum
+go.work
