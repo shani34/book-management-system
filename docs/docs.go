@@ -56,7 +56,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.Book"
+                                "$ref": "#/definitions/models.Book"
                             }
                         }
                     },
@@ -90,7 +90,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.BookRequest"
+                            "$ref": "#/definitions/models.BookRequest"
                         }
                     }
                 ],
@@ -98,7 +98,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.Book"
+                            "$ref": "#/definitions/models.Book"
                         }
                     },
                     "400": {
@@ -148,7 +148,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.Book"
+                            "$ref": "#/definitions/models.Book"
                         }
                     },
                     "404": {
@@ -197,7 +197,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.BookRequest"
+                            "$ref": "#/definitions/models.BookRequest"
                         }
                     }
                 ],
@@ -205,7 +205,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.Book"
+                            "$ref": "#/definitions/models.Book"
                         }
                     },
                     "400": {
@@ -285,7 +285,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_shani34_book-management-system_internal_models.Book": {
+        "models.Book": {
             "type": "object",
             "properties": {
                 "author": {
@@ -308,7 +308,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_shani34_book-management-system_internal_models.BookRequest": {
+        "models.BookRequest": {
             "type": "object",
             "properties": {
                 "author": {

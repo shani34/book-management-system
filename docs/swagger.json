@@ -53,7 +53,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.Book"
+                                "$ref": "#/definitions/models.Book"
                             }
                         }
                     },
@@ -87,7 +87,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.BookRequest"
+                            "$ref": "#/definitions/models.BookRequest"
                         }
                     }
                 ],
@@ -95,7 +95,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.Book"
+                            "$ref": "#/definitions/models.Book"
                         }
                     },
                     "400": {
@@ -145,7 +145,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.Book"
+                            "$ref": "#/definitions/models.Book"
                         }
                     },
                     "404": {
@@ -194,7 +194,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.BookRequest"
+                            "$ref": "#/definitions/models.BookRequest"
                         }
                     }
                 ],
@@ -202,7 +202,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_shani34_book-management-system_internal_models.Book"
+                            "$ref": "#/definitions/models.Book"
                         }
                     },
                     "400": {
@@ -282,7 +282,7 @@
         }
     },
     "definitions": {
-        "github_com_shani34_book-management-system_internal_models.Book": {
+        "models.Book": {
             "type": "object",
             "properties": {
                 "author": {
@@ -305,7 +305,7 @@
                 }
             }
         },
-        "github_com_shani34_book-management-system_internal_models.BookRequest": {
+        "models.BookRequest": {
             "type": "object",
             "properties": {
                 "author": {
