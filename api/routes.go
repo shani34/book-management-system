@@ -14,11 +14,10 @@ import (
 )
 
 func SetupRouter() *gin.Engine {
-    router := gin.New()
-    
+    router := gin.Default()
+
     // Middleware
     router.Use(middleware.Logger())
-    // router.Use(middleware.ErrorHandler())
     router.Use(gin.Recovery())
     
     // Initialize dependencies
