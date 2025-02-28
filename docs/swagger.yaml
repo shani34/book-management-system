@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  models.Book:
+  github_com_shani34_book-management-system_internal_models.Book:
     properties:
       author:
         type: string
@@ -15,7 +15,7 @@ definitions:
       year:
         type: integer
     type: object
-  models.BookRequest:
+  github_com_shani34_book-management-system_internal_models.BookRequest:
     properties:
       author:
         example: Alan A. A. Donovan
@@ -61,7 +61,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Book'
+              $ref: '#/definitions/github_com_shani34_book-management-system_internal_models.Book'
             type: array
         "500":
           description: Internal Server Error
@@ -82,14 +82,14 @@ paths:
         name: book
         required: true
         schema:
-          $ref: '#/definitions/models.BookRequest'
+          $ref: '#/definitions/github_com_shani34_book-management-system_internal_models.BookRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Book'
+            $ref: '#/definitions/github_com_shani34_book-management-system_internal_models.Book'
         "400":
           description: Bad Request
           schema:
@@ -152,7 +152,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Book'
+            $ref: '#/definitions/github_com_shani34_book-management-system_internal_models.Book'
         "404":
           description: Not Found
           schema:
@@ -183,14 +183,14 @@ paths:
         name: book
         required: true
         schema:
-          $ref: '#/definitions/models.BookRequest'
+          $ref: '#/definitions/github_com_shani34_book-management-system_internal_models.BookRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Book'
+            $ref: '#/definitions/github_com_shani34_book-management-system_internal_models.Book'
         "400":
           description: Bad Request
           schema:
@@ -214,4 +214,9 @@ paths:
       - books
 schemes:
 - http
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

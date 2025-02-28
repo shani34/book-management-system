@@ -6,17 +6,21 @@ import (
     "log"
 )
 
-// @title           Book Management API
-// @version         1.0
-// @description     REST API for managing books with Redis caching and Kafka integration
-// @termsOfService  http://swagger.io/terms/
-// @contact.name    API Support
-// @contact.email   support@bookapi.com
-// @license.name    Apache 2.0
-// @license.url     http://www.apache.org/licenses/LICENSE-2.0.html
-// @host            localhost:8080
-// @BasePath        /api/v1
-// @schemes         http
+// @title Book Management API
+// @version 1.0
+// @description REST API for managing books with Redis caching and Kafka integration
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email support@bookapi.com
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:8080
+// @BasePath /api/v1
+// @schemes http
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @swagger 2.0  // <-- Add this line to specify Swagger version
 func main() {
     // Load environment variables
     config.LoadEnv()
