@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/shani34/book-management-system/internal/models"
 	"github.com/shani34/book-management-system/internal/services"
@@ -18,8 +17,8 @@ func NewBookHandler(service *services.BookService) *BookHandler {
 }
 
 // GetBooks godoc
-// @Summary Get all books
-// @Description Get books with pagination
+// @Summary List books
+// @Description Get paginated list of books
 // @Tags books
 // @Accept json
 // @Produce json
@@ -33,17 +32,41 @@ func (h *BookHandler) GetBooks(c *gin.Context) {
 	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
 
 	books, err := h.service.GetAllBooks(limit, offset)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+	if handleError(c, err) {
 		return
 	}
 
 	c.JSON(http.StatusOK, books)
 }
 
+// GetBook godoc
+// @Summary Get a book
+// @Description Get book by ID
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path int true "Book ID"
+// @Success 200 {object} models.Book
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /books/{id} [get]
+func (h *BookHandler) GetBook(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if handleError(c, err) {
+		return
+	}
+
+	book, err := h.service.GetBookByID(uint(id))
+	if handleError(c, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, book)
+}
+
 // CreateBook godoc
-// @Summary Create a new book
-// @Description Create book with title, author, and year
+// @Summary Create book
+// @Description Create new book
 // @Tags books
 // @Accept json
 // @Produce json
@@ -60,15 +83,83 @@ func (h *BookHandler) CreateBook(c *gin.Context) {
 	}
 
 	if err := h.service.CreateBook(&book); err != nil {
-		if errors.Is(err, services.ErrInvalidInput) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create book"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusCreated, book)
 }
 
-// Add similar handler methods for GetBook, UpdateBook, DeleteBook
+// UpdateBook godoc
+// @Summary Update book
+// @Description Update existing book
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path int true "Book ID"
+// @Param book body models.BookRequest true "Book data"
+// @Success 200 {object} models.Book
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /books/{id} [put]
+func (h *BookHandler) UpdateBook(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if handleError(c, err) {
+		return
+	}
+
+	var book models.Book
+	if err := c.ShouldBindJSON(&book); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	if err := h.service.UpdateBook(uint(id), &book); err != nil {
+		handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, book)
+}
+
+// DeleteBook godoc
+// @Summary Delete book
+// @Description Delete book by ID
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path int true "Book ID"
+// @Success 204
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /books/{id} [delete]
+func (h *BookHandler) DeleteBook(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if handleError(c, err) {
+		return
+	}
+
+	if err := h.service.DeleteBook(uint(id)); err != nil {
+		handleError(c, err)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func handleError(c *gin.Context, err error) bool {
+	if err == nil {
+		return false
+	}
+
+	switch err {
+	case gorm.ErrRecordNotFound:
+		c.JSON(http.StatusNotFound, gin.H{"error": "book not found"})
+	case services.ErrInvalidInput:
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	default:
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+	}
+	return true
+}

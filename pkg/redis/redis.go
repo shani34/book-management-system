@@ -7,11 +7,13 @@ import (
 	"time"
 )
 
-var Client *redis.Client
+type RedisClient  struct{
+  Client *redis.Client
+}
 var Ctx = context.Background()
 
-func InitRedis() {
-	Client = redis.NewClient(&redis.Options{
+func InitRedis()(*RedisClient, error) {
+	Client:= redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_URL"),
 		Password: "",
 		DB:       0,
@@ -21,16 +23,20 @@ func InitRedis() {
 	if err != nil {
 		panic("failed to connect to redis")
 	}
+
+	return &RedisClient{
+		Client: Client,
+	}, nil
 }
 
-func Set(key string, value interface{}, expiration time.Duration) error {
-	return Client.Set(Ctx, key, value, expiration).Err()
+func(r *RedisClient) Set(key string, value interface{}, expiration time.Duration) error {
+	return r.Client.Set(Ctx, key, value, expiration).Err()
 }
 
-func Get(key string) (string, error) {
-	return Client.Get(Ctx, key).Result()
+func(r *RedisClient) Get(key string) (string, error) {
+	return r.Client.Get(Ctx, key).Result()
 }
 
-func Delete(keys ...string) error {
-	return Client.Del(Ctx, keys...).Err()
+func(r *RedisClient) Delete(keys ...string) error {
+	return r.Client.Del(Ctx, keys...).Err()
 }

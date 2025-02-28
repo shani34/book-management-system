@@ -2,7 +2,6 @@ package services
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/shani34/book-management-system/internal/models"
 	"github.com/shani34/book-management-system/internal/repositories"
@@ -14,7 +13,7 @@ import (
 
 type BookService struct {
 	repo    *repositories.BookRepository
-	cache   *redis.Client
+	cache   *redis.
 	timeout time.Duration
 }
 
@@ -29,27 +28,20 @@ func NewBookService(repo *repositories.BookRepository, cache *redis.Client) *Boo
 func (s *BookService) GetAllBooks(limit, offset int) ([]models.Book, error) {
 	cacheKey := fmt.Sprintf("books:%d:%d", limit, offset)
 	
-	// Try cache first
-	cached, err := s.cache.Get(cacheKey)
-	if err == nil {
+	if cached, err := s.cache.Get(cacheKey); err == nil {
 		var books []models.Book
-		if err := json.Unmarshal([]byte(cached), &books); err == nil {
-			log.Printf("Cache hit for %s", cacheKey)
+		if json.Unmarshal([]byte(cached), &books) == nil {
 			return books, nil
 		}
 	}
 
-	// Cache miss, query database
 	books, err := s.repo.GetAll(limit, offset)
 	if err != nil {
-		log.Printf("Database error in GetAllBooks: %v", err)
 		return nil, err
 	}
 
-	// Update cache
-	serialized, _ := json.Marshal(books)
-	if err := s.cache.Set(cacheKey, string(serialized), s.timeout); err != nil {
-		log.Printf("Cache set error: %v", err)
+	if serialized, err := json.Marshal(books); err == nil {
+		s.cache.Set(cacheKey, string(serialized), s.timeout)
 	}
 	
 	return books, nil
@@ -58,30 +50,20 @@ func (s *BookService) GetAllBooks(limit, offset int) ([]models.Book, error) {
 func (s *BookService) GetBookByID(id uint) (*models.Book, error) {
 	cacheKey := fmt.Sprintf("book:%d", id)
 	
-	// Try cache first
-	cached, err := s.cache.Get(cacheKey)
-	if err == nil {
+	if cached, err := s.cache.Get(cacheKey); err == nil {
 		var book models.Book
-		if err := json.Unmarshal([]byte(cached), &book); err == nil {
-			log.Printf("Cache hit for %s", cacheKey)
+		if json.Unmarshal([]byte(cached), &book) == nil {
 			return &book, nil
 		}
 	}
 
-	// Cache miss, query database
 	book, err := s.repo.GetByID(id)
 	if err != nil {
-		if errors.Is(err, repositories.ErrRecordNotFound) {
-			return nil, ErrNotFound
-		}
-		log.Printf("Database error in GetBookByID: %v", err)
 		return nil, err
 	}
 
-	// Update cache
-	serialized, _ := json.Marshal(book)
-	if err := s.cache.Set(cacheKey, string(serialized), s.timeout); err != nil {
-		log.Printf("Cache set error: %v", err)
+	if serialized, err := json.Marshal(book); err == nil {
+		s.cache.Set(cacheKey, string(serialized), s.timeout)
 	}
 	
 	return book, nil
@@ -93,45 +75,69 @@ func (s *BookService) CreateBook(book *models.Book) error {
 	}
 
 	if err := s.repo.Create(book); err != nil {
-		log.Printf("Database error in CreateBook: %v", err)
 		return err
 	}
 
-	// Invalidate cache
-	if err := s.cache.Delete("books:*"); err != nil {
-		log.Printf("Cache delete error: %v", err)
-	}
-
-	// Publish Kafka event
-	event := map[string]interface{}{
-		"event_type": "book_created",
-		"book":       book,
-	}
-	eventData, _ := json.Marshal(event)
-	if err := kafka.PublishEvent("book_events", eventData); err != nil {
-		log.Printf("Failed to publish Kafka event: %v", err)
-	}
-
+	s.cache.Delete("books:*")
+	s.publishKafkaEvent("book_created", book)
 	return nil
 }
 
-// Add similar methods for Update and Delete with proper error handling
+func (s *BookService) UpdateBook(id uint, book *models.Book) error {
+	existing, err := s.repo.GetByID(id)
+	if err != nil {
+		return err
+	}
 
-// Custom errors
-var (
-	ErrInvalidInput = errors.New("invalid input")
-	ErrNotFound     = errors.New("book not found")
-)
+	if err := validateBook(book); err != nil {
+		return err
+	}
+
+	book.ID = id
+	book.CreatedAt = existing.CreatedAt
+	
+	if err := s.repo.Update(book); err != nil {
+		return err
+	}
+
+	s.cache.Delete(fmt.Sprintf("book:%d", id), "books:*")
+	s.publishKafkaEvent("book_updated", book)
+	return nil
+}
+
+func (s *BookService) DeleteBook(id uint) error {
+	if err := s.repo.Delete(id); err != nil {
+		return err
+	}
+
+	s.cache.Delete(fmt.Sprintf("book:%d", id), "books:*")
+	s.publishKafkaEvent("book_deleted", map[string]interface{}{"id": id})
+	return nil
+}
 
 func validateBook(book *models.Book) error {
 	if book.Title == "" {
-		return fmt.Errorf("%w: title is required", ErrInvalidInput)
+		return fmt.Errorf("title is required")
 	}
 	if book.Author == "" {
-		return fmt.Errorf("%w: author is required", ErrInvalidInput)
+		return fmt.Errorf("author is required")
 	}
 	if book.Year < 0 || book.Year > time.Now().Year()+1 {
-		return fmt.Errorf("%w: invalid year", ErrInvalidInput)
+		return fmt.Errorf("invalid year")
 	}
 	return nil
+}
+
+func (s *BookService) publishKafkaEvent(eventType string, payload interface{}) {
+	event := map[string]interface{}{
+		"event_type": eventType,
+		"payload":    payload,
+		"timestamp":  time.Now().UTC(),
+	}
+
+	if eventData, err := json.Marshal(event); err == nil {
+		if err := kafka.PublishEvent("book_events", eventData); err != nil {
+			log.Printf("Failed to publish Kafka event: %v", err)
+		}
+	}
 }
