@@ -9,6 +9,8 @@ import (
 	"github.com/shani34/book-management-system/pkg/db"
 	"github.com/shani34/book-management-system/pkg/kafka"
 	"github.com/shani34/book-management-system/pkg/redis"
+	"github.com/gin-contrib/cors"
+	"time"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -16,6 +18,14 @@ import (
 func SetupRouter() *gin.Engine {
     router := gin.Default()
 
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // Allow all domains (adjust for security)
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
     // Middleware
     router.Use(middleware.Logger())
     router.Use(gin.Recovery())
