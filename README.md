@@ -39,12 +39,7 @@ A REST API for managing books with Redis caching and Kafka event streaming, buil
    ```bash
    swag init -g cmd/main.go -o docs
    ```
-
-4. **Start services**
-   ```bash
-   docker-compose up --build  # Starts PostgreSQL, Redis, Kafka
-   ```
-5. **Add .env file**
+4. **Add .env file**
     ```bash
    DB_HOST=localhost  # modify according to your local set up
    DB_PORT=5432
@@ -63,6 +58,11 @@ A REST API for managing books with Redis caching and Kafka event streaming, buil
    SERVER_READ_TIMEOUT=10s
    SERVER_WRITE_TIMEOUT=10s
     ```
+    
+5. **Start services**
+   ```bash
+   docker-compose up --build  # Starts PostgreSQL, Redis, Kafka
+   ```
 
 ## Production Deployment
 
