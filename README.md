@@ -44,7 +44,7 @@ A REST API for managing books with Redis caching and Kafka event streaming, buil
    ```bash
    docker-compose up --build  # Starts PostgreSQL, Redis, Kafka
    ```
-5. **Add .env file from docker compose file**
+5. **Add .env file**
     ```bash
    DB_HOST=localhost  # modify according to your local set up
    DB_PORT=5432
